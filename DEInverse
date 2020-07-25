@@ -1,0 +1,49 @@
+DEInverse[function_, head_, variable_, list_: Null] :=
+ Block[{transform, exp, equate},
+  transform := 
+   Function[a, 
+    Nest[Function[b, D[b, variable]/D[head[variable], variable]], 
+     variable, a]];
+  If[TrueQ[list == Null],
+   (*This block of code is used to transform the given ODE to the \
+inverted form*)
+   ReplaceAll[
+     {(u_)[variable] /; u != head :> u[head[variable]],
+      (u_)[head[variable]] /; u != head :> u[variable],
+      variable -> head[variable],
+      head[variable] -> variable,
+      Derivative[n_][head][variable] :> transform[n]}
+     ][function],
+   
+   Join[
+    (*This block of code is used to transform the given ODE to the \
+inverted form*)
+    ReplaceAll[
+      {(u_)[variable] /; u != head :> u[head[variable]],
+       (u_)[head[variable]] /; u != head :> u[variable],
+       variable -> head[variable],
+       head[variable] -> variable,
+       Derivative[n_][head][variable] :> transform[n]}
+      ][{function}]
+    ,
+    (*The code below is used to adjust the initial conditions given \
+in list into the proper conditions for the new ODE*)
+    (((list /. 
+           Derivative[n_][head][_] == _ :> 
+            equate[exp[n], transform[n]])
+         
+         /. Append[
+          (Rest[
+             SortBy[list, Derivative] /. Equal[c_, d_] :> Rule[c, d]]
+            /. 
+            Rule[Derivative[n_][head][_], a_] :> 
+             Rule[Derivative[n][head][variable], a ]),
+          
+          head[a_] == b_ :> head[b] == a])
+       /. equate[a_, b_] :> Equal[a, b])
+     /. exp[n_] :> 
+      Derivative[n][
+        head][ (list /. Equal[Derivative[0][head][_], a_] :> a)[[1]]]
+    ]
+   ]
+  ]
