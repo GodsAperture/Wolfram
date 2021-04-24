@@ -1,395 +1,46 @@
-(* Content-type: application/vnd.wolfram.mathematica *)
+(*Successfully reimplemented the differentiation function in the fewest lines possible for the basic mathematical functions.*)
 
-(*** Wolfram Notebook File ***)
-(* http://www.wolfram.com/nb *)
+Der[exp_, var_] :=
+  	(*Level here produces a list of what all exists in the expression \
+'exp' and then checks to see if it is only the variable 'var'. 
+  If it is the variable, then it returns 1, 
+  if not then it checks the length and if the length is greater than \
+1, then it goes to differentiation. If it isn't greater than 1, 
+  it goes to 0.*)
+  (If[(Length[Level[exp, {0, Infinity}]] == 1
+      &&
+      Level[exp, {0, Infinity}][[1]] == var),
+    
+    1,
+    
+    	(*The lines below represent the differentiation rules that allow \
+for a proper result*)
+    (exp /.
+      {Equal[a_, b_] :> Equal[Der[a, var], Der[b, var]],
+       Plus[a_, b_] :> Plus[Der[a, var], Der[b, var]],
+       Times[a_, b_] :> Times[Der[a, var], b] + Times[a, Der[b, var]],
+       Power[a_, b_] :> 
+        a^(b - 1) Der[a, var] b + Log[a] a^b Der[b, var],
+       Divide[a_, b_] :> Divide[Der[a, var] b - a Der[b, var], b^2],
+       
+       (*This is a list of common derivatives*)
+       Sin[a_] :> Cos[a] Der[a, var],
+       Cos[a_] :> -Sin[a] Der[a, var],
+       Sec[a_] :> Sec[a] Tan[a] Der[a, var],
+       Csc[a_] :> -Csc[a] Cot[a] Der[a, var],
+       Tan[a_] :> Sec[a]^2 Der[a, var],
+       Log[a_] :> Der[a, var]/a,
+       ArcSin[a_] :> Der[a, var]/Sqrt[1 - a^2],
+       ArcCos[a_] :> -Der[a, var]/Sqrt[1 - a^2],
+       ArcSec[a_] :> Der[a, var]/(a^2 Sqrt[1 - 1/a^2]),
+       ArcCsc[a_] :> -Der[a, var]/(a^2 Sqrt[1 - 1/a^2]),
+       ArcTan[a_] :> Der[a, var]/(a^2 + 1),
+       
+       	(*This is the extended chain rule for multivariable functions*)
 
-(* CreatedBy='Mathematica 12.0' *)
-
-(*CacheID: 234*)
-(* Internal cache information:
-NotebookFileLineBreakTest
-NotebookFileLineBreakTest
-NotebookDataPosition[       158,          7]
-NotebookDataLength[     16098,        387]
-NotebookOptionsPosition[     15542,        369]
-NotebookOutlinePosition[     15919,        385]
-CellTagsIndexPosition[     15876,        382]
-WindowFrame->Normal*)
-
-(* Beginning of Notebook Content *)
-Notebook[{
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"Der", "[", 
-    RowBox[{"exp_", ",", "var_"}], "]"}], ":=", "\[IndentingNewLine]", "\t", 
-   RowBox[{"(*", 
-    RowBox[{
-     RowBox[{
-     "Level", " ", "here", " ", "produces", " ", "a", " ", "list", " ", "of", 
-      " ", "what", " ", "all", " ", "exists", " ", "in", " ", "the", " ", 
-      RowBox[{"expression", " ", "'"}], 
-      RowBox[{"exp", "'"}], " ", "and", " ", "then", " ", "checks", " ", "to",
-       " ", "see", " ", "if", " ", "it", " ", "is", " ", "only", " ", "the", 
-      " ", 
-      RowBox[{"variable", " ", "'"}], 
-      RowBox[{
-       RowBox[{"var", "'"}], ".", " ", "If"}], " ", "it", " ", "is", " ", 
-      "the", " ", "variable"}], ",", " ", 
-     RowBox[{"then", " ", "it", " ", "returns", " ", "1"}], ",", " ", 
-     RowBox[{
-     "if", " ", "not", " ", "then", " ", "it", " ", "checks", " ", "the", " ",
-       "length", " ", "and", " ", "if", " ", "the", " ", "length", " ", "is", 
-      " ", "greater", " ", "than", " ", "1"}], ",", " ", 
-     RowBox[{"then", " ", "it", " ", "goes", " ", "to", " ", 
-      RowBox[{"differentiation", ".", " ", "If"}], " ", "it", " ", 
-      RowBox[{"isn", "'"}], "t", " ", "greater", " ", "than", " ", "1"}], ",",
-      " ", 
-     RowBox[{"it", " ", "goes", " ", "to", " ", "0."}]}], "*)"}], 
-   "\[IndentingNewLine]", 
-   RowBox[{"(", 
-    RowBox[{"If", "[", 
-     RowBox[{
-      RowBox[{"(", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"Length", "[", 
-          RowBox[{"Level", "[", 
-           RowBox[{"exp", ",", 
-            RowBox[{"{", 
-             RowBox[{"0", ",", "Infinity"}], "}"}]}], "]"}], "]"}], "==", 
-         "1"}], "\[IndentingNewLine]", "&&", "\[IndentingNewLine]", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"Level", "[", 
-           RowBox[{"exp", ",", 
-            RowBox[{"{", 
-             RowBox[{"0", ",", "Infinity"}], "}"}]}], "]"}], "[", 
-          RowBox[{"[", "1", "]"}], "]"}], "==", "var"}]}], ")"}], ",", 
-      "\[IndentingNewLine]", "\[IndentingNewLine]", "1", ",", 
-      "\[IndentingNewLine]", "\[IndentingNewLine]", "\t", 
-      RowBox[{"(*", 
-       RowBox[{
-       "The", " ", "lines", " ", "below", " ", "represent", " ", "the", " ", 
-        "differentiation", " ", "rules", " ", "that", " ", "allow", " ", 
-        "for", " ", "a", " ", "proper", " ", "result"}], "*)"}], 
-      "\[IndentingNewLine]", 
-      RowBox[{"(", 
-       RowBox[{"exp", "/.", "\[IndentingNewLine]", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"Equal", "[", 
-            RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", 
-           RowBox[{"Equal", "[", 
-            RowBox[{
-             RowBox[{"Der", "[", 
-              RowBox[{"a", ",", "var"}], "]"}], ",", 
-             RowBox[{"Der", "[", 
-              RowBox[{"b", ",", "var"}], "]"}]}], "]"}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Plus", "[", 
-            RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", 
-           RowBox[{"Plus", "[", 
-            RowBox[{
-             RowBox[{"Der", "[", 
-              RowBox[{"a", ",", "var"}], "]"}], ",", 
-             RowBox[{"Der", "[", 
-              RowBox[{"b", ",", "var"}], "]"}]}], "]"}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Times", "[", 
-            RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"Times", "[", 
-             RowBox[{
-              RowBox[{"Der", "[", 
-               RowBox[{"a", ",", "var"}], "]"}], ",", "b"}], "]"}], "+", 
-            RowBox[{"Times", "[", 
-             RowBox[{"a", ",", 
-              RowBox[{"Der", "[", 
-               RowBox[{"b", ",", "var"}], "]"}]}], "]"}]}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Power", "[", 
-            RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", " ", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"a", "^", 
-              RowBox[{"(", 
-               RowBox[{"b", "-", "1"}], ")"}]}], 
-             RowBox[{"Der", "[", 
-              RowBox[{"a", ",", "var"}], "]"}], "b"}], "+", 
-            RowBox[{
-             RowBox[{"Log", "[", "a", "]"}], 
-             RowBox[{"a", "^", "b"}], " ", 
-             RowBox[{"Der", "[", 
-              RowBox[{"b", ",", "var"}], "]"}]}]}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Divide", "[", 
-            RowBox[{"a_", ",", "b_"}], "]"}], "\[RuleDelayed]", " ", 
-           RowBox[{"Divide", "[", 
-            RowBox[{
-             RowBox[{
-              RowBox[{
-               RowBox[{"Der", "[", 
-                RowBox[{"a", ",", "var"}], "]"}], " ", "b"}], "-", 
-              RowBox[{"a", " ", 
-               RowBox[{"Der", "[", 
-                RowBox[{"b", ",", "var"}], "]"}]}]}], ",", 
-             RowBox[{"b", "^", "2"}]}], "]"}]}], ",", "\[IndentingNewLine]", 
-          "\[IndentingNewLine]", 
-          RowBox[{"(*", 
-           RowBox[{
-           "This", " ", "is", " ", "a", " ", "list", " ", "of", " ", "common",
-             " ", "derivatives"}], "*)"}], "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Sin", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"Cos", "[", "a", "]"}], 
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Cos", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"-", 
-             RowBox[{"Sin", "[", "a", "]"}]}], 
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Sec", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"Sec", "[", "a", "]"}], 
-            RowBox[{"Tan", "[", "a", "]"}], 
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Csc", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"-", 
-             RowBox[{"Csc", "[", "a", "]"}]}], 
-            RowBox[{"Cot", "[", "a", "]"}], 
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Tan", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{
-             RowBox[{"Sec", "[", "a", "]"}], "^", "2"}], 
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"Log", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}], "/", "a"}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"ArcSin", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}], "/", 
-            RowBox[{"Sqrt", "[", 
-             RowBox[{"1", "-", 
-              RowBox[{"a", "^", "2"}]}], "]"}]}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"ArcCos", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"-", 
-             RowBox[{"Der", "[", 
-              RowBox[{"a", ",", "var"}], "]"}]}], "/", 
-            RowBox[{"Sqrt", "[", 
-             RowBox[{"1", "-", 
-              RowBox[{"a", "^", "2"}]}], "]"}]}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"ArcSec", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}], "/", 
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{"a", "^", "2"}], " ", 
-              RowBox[{"Sqrt", "[", 
-               RowBox[{"1", "-", 
-                RowBox[{"1", "/", 
-                 RowBox[{"a", "^", "2"}]}]}], "]"}]}], ")"}]}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"ArcCsc", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"-", 
-             RowBox[{"Der", "[", 
-              RowBox[{"a", ",", "var"}], "]"}]}], "/", 
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{"a", "^", "2"}], 
-              RowBox[{"Sqrt", "[", 
-               RowBox[{"1", "-", 
-                RowBox[{"1", "/", 
-                 RowBox[{"a", "^", "2"}]}]}], "]"}]}], ")"}]}]}], ",", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"ArcTan", "[", "a_", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"Der", "[", 
-             RowBox[{"a", ",", "var"}], "]"}], "/", 
-            RowBox[{"(", 
-             RowBox[{
-              RowBox[{"a", "^", "2"}], "+", "1"}], ")"}]}]}], ",", 
-          "\[IndentingNewLine]", "\[IndentingNewLine]", "\t", 
-          RowBox[{"(*", 
-           RowBox[{
-           "This", " ", "is", " ", "the", " ", "extended", " ", "chain", " ", 
-            "rule", " ", "for", " ", "multivariable", " ", "functions"}], 
-           "*)"}], "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{"u_", "[", "a__", "]"}], "\[RuleDelayed]", 
-           RowBox[{
-            RowBox[{"(", 
-             RowBox[{"Table", "[", 
-              RowBox[{
-               RowBox[{"Der", "[", 
-                RowBox[{
-                 RowBox[{"u", "[", "a", "]"}], ",", 
-                 RowBox[{
-                  RowBox[{"{", "a", "}"}], "[", 
-                  RowBox[{"[", "i", "]"}], "]"}]}], "]"}], ",", 
-               RowBox[{"{", 
-                RowBox[{"i", ",", "1", ",", 
-                 RowBox[{"Length", "[", 
-                  RowBox[{"{", "a", "}"}], "]"}]}], "}"}]}], "]"}], ")"}], 
-            ".", 
-            RowBox[{"(", 
-             RowBox[{"Map", "[", 
-              RowBox[{
-               RowBox[{"Function", "[", 
-                RowBox[{"Der", "[", 
-                 RowBox[{"#", ",", "var"}], "]"}], "]"}], ",", 
-               RowBox[{"{", "a", "}"}]}], "]"}], ")"}]}]}]}], "}"}]}], ")"}], 
-      ",", "\[IndentingNewLine]", "\[IndentingNewLine]", 
-      RowBox[{"If", "[", 
-       RowBox[{
-        RowBox[{"TrueQ", "[", 
-         RowBox[{"exp", "\[Equal]", "var"}], "]"}], ",", 
-        RowBox[{
-         RowBox[{"Derivative", "[", "1", "]"}], "[", "exp", "]"}], ",", "0"}],
-        "]"}]}], "]"}], ")"}]}], ";"}]], "Input",
- CellChangeTimes->{{3.792419886420039*^9, 3.7924199459667892`*^9}, {
-   3.792420001996855*^9, 3.7924200149462166`*^9}, {3.7924200472607956`*^9, 
-   3.7924201682631016`*^9}, {3.792420242216239*^9, 3.792420248775714*^9}, {
-   3.7924203793773537`*^9, 3.792420470180399*^9}, {3.7924206024076805`*^9, 
-   3.7924207907478657`*^9}, {3.792420820755591*^9, 3.7924209079193935`*^9}, {
-   3.792420965217153*^9, 3.792421005311886*^9}, {3.79242123063309*^9, 
-   3.7924212393996797`*^9}, {3.792421354034994*^9, 3.79242138436687*^9}, {
-   3.7924214961159267`*^9, 3.792421633703313*^9}, {3.7924227038196507`*^9, 
-   3.7924227554219055`*^9}, {3.792422798022235*^9, 3.7924229151998205`*^9}, {
-   3.7924229538740606`*^9, 3.792422974473951*^9}, {3.792423109474509*^9, 
-   3.7924231687619143`*^9}, {3.7924232267671604`*^9, 
-   3.7924232738539257`*^9}, {3.7924233106558127`*^9, 3.792423313413821*^9}, {
-   3.792423345072721*^9, 3.792423393837571*^9}, {3.792423429993163*^9, 
-   3.792423497645952*^9}, {3.7924254365710216`*^9, 3.792425440406218*^9}, {
-   3.792461596831111*^9, 3.7924616072648954`*^9}, 3.7924616640149603`*^9, {
-   3.794174609708412*^9, 3.7941747440784073`*^9}, {3.7941750331061172`*^9, 
-   3.7941750623738422`*^9}, {3.794175120130022*^9, 3.7941751210461383`*^9}, {
-   3.79417522196142*^9, 3.794175222714611*^9}, {3.794175645425178*^9, 
-   3.7941756561853848`*^9}, {3.7943163944210253`*^9, 
-   3.7943164225463324`*^9}, {3.79431654574094*^9, 3.7943165613386583`*^9}, {
-   3.7943170799458637`*^9, 3.79431708953193*^9}, {3.7943171359301653`*^9, 
-   3.7943172117783575`*^9}, {3.794317720807171*^9, 3.794317779617632*^9}, {
-   3.794317839605729*^9, 3.794317863182435*^9}, {3.7943180747526255`*^9, 
-   3.794318115859297*^9}, {3.794318273995513*^9, 3.794318288218212*^9}, {
-   3.794318439790013*^9, 3.7943184620571933`*^9}, {3.7943186086096935`*^9, 
-   3.7943186900718813`*^9}, {3.7943187229554253`*^9, 
-   3.7943187788729773`*^9}, {3.7943188752483845`*^9, 3.79431888145617*^9}, {
-   3.7943199084628134`*^9, 3.7943199086054134`*^9}, 3.7943199830703*^9, {
-   3.7943200696502104`*^9, 3.7943200767203074`*^9}, {3.794320320401828*^9, 
-   3.7943203287271347`*^9}, {3.794320796039075*^9, 3.7943208079851246`*^9}, {
-   3.794320858644657*^9, 3.794320924944381*^9}, {3.794321004326785*^9, 
-   3.794321110413968*^9}, {3.7943213385072393`*^9, 3.794321340311477*^9}, {
-   3.7956321440657473`*^9, 3.7956324107491083`*^9}, {3.797169553235977*^9, 
-   3.7971696174742346`*^9}, {3.7975959781541348`*^9, 3.797596008050776*^9}, {
-   3.7975972152383823`*^9, 3.797597236505943*^9}, {3.7975973011368628`*^9, 
-   3.797597366288843*^9}, {3.7975973988921585`*^9, 3.797597427722063*^9}, {
-   3.797597485222003*^9, 3.79759751203146*^9}, {3.797597874459669*^9, 
-   3.7975978811468534`*^9}, {3.797599299399171*^9, 3.797599309432081*^9}, {
-   3.8043879174633636`*^9, 3.804387936867467*^9}, {3.8043880504090357`*^9, 
-   3.8043880574541826`*^9}},
- CellLabel->"In[7]:=",ExpressionUUID->"9942bfdd-6cb3-47d3-8c76-684f088195f8"],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{
-   RowBox[{"Der", "[", 
-    RowBox[{
-     RowBox[{
-      RowBox[{"Sin", "[", 
-       RowBox[{
-        RowBox[{"206", 
-         RowBox[{"t", "^", "2"}]}], "-", 
-        RowBox[{"Cos", "[", 
-         RowBox[{"40", "t"}], "]"}]}], "]"}], " ", 
-      RowBox[{
-       RowBox[{"(", 
-        RowBox[{
-         RowBox[{"E", "^", "t"}], "-", 
-         RowBox[{"E", "^", 
-          RowBox[{"-", "t"}]}]}], ")"}], "/", "2"}]}], ",", "t"}], "]"}], "-", 
-   RowBox[{"D", "[", 
-    RowBox[{
-     RowBox[{
-      RowBox[{"Sin", "[", 
-       RowBox[{
-        RowBox[{"206", 
-         RowBox[{"t", "^", "2"}]}], "-", 
-        RowBox[{"Cos", "[", 
-         RowBox[{"40", "t"}], "]"}]}], "]"}], " ", 
-      RowBox[{
-       RowBox[{"(", 
-        RowBox[{
-         RowBox[{"E", "^", "t"}], "-", 
-         RowBox[{"E", "^", 
-          RowBox[{"-", "t"}]}]}], ")"}], "/", "2"}]}], ",", "t"}], "]"}]}], "//",
-   "Simplify"}]], "Input",
- CellChangeTimes->{{3.795031160725368*^9, 3.7950311643845625`*^9}, {
-  3.7975970020864544`*^9, 3.797597006509366*^9}, {3.797597527803135*^9, 
-  3.7975975761705713`*^9}, {3.8043879456882334`*^9, 3.804387959318325*^9}},
- CellLabel->"In[8]:=",ExpressionUUID->"02b9089e-4a23-469d-80a2-2c9f881f879d"],
-
-Cell[BoxData["0"], "Output",
- CellChangeTimes->{{3.8043879413578076`*^9, 3.804387959618374*^9}, 
-   3.8043880613161163`*^9},
- CellLabel->"Out[8]=",ExpressionUUID->"704bc28b-bf8a-4d36-b19a-6c102a1b4302"]
-}, Open  ]]
-},
-WindowSize->{Full, Full},
-WindowMargins->{{0, Automatic}, {Automatic, 0}},
-Magnification:>0.9 Inherited,
-FrontEndVersion->"12.0 for Microsoft Windows (64-bit) (April 8, 2019)",
-StyleDefinitions->"ReverseColor.nb"
-]
-(* End of Notebook Content *)
-
-(* Internal cache information *)
-(*CellTagsOutline
-CellTagsIndex->{}
-*)
-(*CellTagsIndex
-CellTagsIndex->{}
-*)
-(*NotebookFileOutline
-Notebook[{
-Cell[558, 20, 13497, 300, 621, "Input",ExpressionUUID->"9942bfdd-6cb3-47d3-8c76-684f088195f8"],
-Cell[CellGroupData[{
-Cell[14080, 324, 1241, 37, 26, "Input",ExpressionUUID->"02b9089e-4a23-469d-80a2-2c9f881f879d"],
-Cell[15324, 363, 202, 3, 30, "Output",ExpressionUUID->"704bc28b-bf8a-4d36-b19a-6c102a1b4302"]
-}, Open  ]]
-}
-]
-*)
-
+       u_[
+         a__] :> (Table[
+           Der[u[a], {a}[[i]]], {i, 1, Length[{a}]}]).(Map[
+           Function[Der[#, var]], {a}])}),
+    
+    If[TrueQ[exp == var], Derivative[1][exp], 0]]);
