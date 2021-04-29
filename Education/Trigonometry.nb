@@ -1,0 +1,39 @@
+(*At some given angle, a the yellow line can be broken into two component vectors (the red and green vectors) using Sine and Cosine (respectively).*)
+
+Manipulate[
+ ParametricPlot[{{Cos[(t 2) \[Pi]], Sin[(t 2) \[Pi]]}, {Cos[a] t, 
+    Sin[a] t}, {Cos[a] t, 0}, {Cos[a], Sin[a] t}, 
+   Piecewise[{{{0.125` Cos[a t], 0.125` Sin[a t]}, 
+      t <= a}, {Undefined, t > a}}]}, {t, 0, 1}, 
+  PlotRange -> {{-1, 1}, {-1, 1}}], {{a, \[Pi]/6, "\[Theta]"}, 0, 
+  2 \[Pi]}]
+  
+  
+  
+  (*Vectors can be added together via like pieces. \
+  Add the x component of one vector the the x component \
+  of another vector, making finding the resulting vector  \
+  of two combined vectors easier.*)
+  
+  Manipulate[
+ Show[Plot[Undefined, {t, -10, 10}, 
+   PlotRange -> {{-10, 10}, {-10, 10}}, AspectRatio -> 1], 
+  Graphics[{{Red, 
+     Arrow[{{0, 0}, {Subscript[red, 1], Subscript[red, 2]}}]}, {Blue, 
+     Arrow[{{Subscript[red, 1], Subscript[red, 
+        2]}, {Subscript[red, 1] + Subscript[blue, 1], 
+        Subscript[red, 2] + Subscript[blue, 2]}}]}, {Green, 
+     Arrow[{{0, 0}, {Subscript[red, 1] + Subscript[blue, 1], 
+        Subscript[red, 2] + Subscript[blue, 2]}}]}, {Blue, 
+     Arrow[{{0, 0}, {Subscript[blue, 1], Subscript[blue, 2]}}]}, {Red,
+      Arrow[{{Subscript[blue, 1], Subscript[blue, 
+        2]}, {Subscript[red, 1] + Subscript[blue, 1], 
+        Subscript[red, 2] + Subscript[blue, 2]}}]}}, 
+   PlotRange -> {{-10, 10}, {-10, 10}}]], {{Subscript[red, 1], 1, 
+   "\!\(\*SubscriptBox[\(Red\), \(x\)]\)"}, -5, 
+  5}, {{Subscript[red, 2], 2, 
+   "\!\(\*SubscriptBox[\(Red\), \(y\)]\)"}, -5, 
+  5}, {{Subscript[blue, 1], -3, 
+   "\!\(\*SubscriptBox[\(Blue\), \(x\)]\)"}, -5, 
+  5}, {{Subscript[blue, 2], 4, 
+   "\!\(\*SubscriptBox[\(Blue\), \(y\)]\)"}, -5, 5}]
